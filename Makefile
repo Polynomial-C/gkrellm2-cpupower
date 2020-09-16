@@ -1,19 +1,21 @@
 # Makefile for gkrellm cpupower plugin
 
-GTK_INCLUDE = `pkg-config gtk+-2.0 --cflags`
-GTK_LIB = `pkg-config gtk+-2.0 --libs`
+PKGCONFIG ?= pkg-config
 
-FLAGS = -O2 -Wall -fPIC $(GTK_INCLUDE)
+GTK_INCLUDE = $(shell $(PKGCONFIG) gtk+-2.0 --cflags)
+GTK_LIB = $(shell $(PKGCONFIG) gtk+-2.0 --libs)
+
+FLAGS = -Wall -fPIC $(GTK_INCLUDE)
 LIBS = $(GTK_LIB)
 
 LFLAGS = -shared -lcpupower
 
-CC = gcc $(CFLAGS) $(FLAGS)
+CC ?= gcc
 
 OBJS = cpupower.o
 
 cpupower.so: $(OBJS)
-	$(CC) $(OBJS) -o cpupower.so $(LFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(FLAGS) $(OBJS) -o cpupower.so $(LFLAGS) $(LIBS)
 
 install: cpupower.so
 	install -D -m 755 -s cpupower.so $(DESTDIR)/usr/lib/gkrellm2/plugins/cpupower.so
